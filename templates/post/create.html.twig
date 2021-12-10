@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Formulaire de création - WFCamp{% endblock %}
+
+{% block body %}
+    <h2>Création de post :</h2>
+
+    <div>
+        {{form_start(form)}}
+        {{form_row(form.content, {'attr': {'class': 'text-secondary'}}) }}
+
+        <button type='submit' class="btn btn-dark">{{ action }}</button>
+        {{form_end(form)}}
+    </div>
+    
+
+{% endblock %}
