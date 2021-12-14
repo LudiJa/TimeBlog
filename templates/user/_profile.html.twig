@@ -1,0 +1,66 @@
+{% extends 'base.html.twig' %}
+{% set posts =  user.posts|length %}
+{% set likes =  user.likes|length %}
+{% set comments =  user.comments|length %}
+{% block title %}
+	{{ user.username }}'s Profile
+{% endblock %}
+
+{% block body %}
+	{% block profile %}
+		<div class="py-5 text-center">
+			<img class="d-block mx-auto mb-4 rounded-circle" src={{ vich_uploader_asset(user) }} alt="" width="256" height="256">
+			<h2>{{ user.username }}</h2>
+		</div>
+		<div class="row">
+			<div class="col-md-4 order-md-2 mb-4">
+				<h4 class="d-flex justify-content-between align-items-center mb-3">
+					<span>Camp score</span>
+					<span class="badge bg-secondary badge-pill">{{ posts + likes + comments }}</span>
+				</h4>
+				<ul class="list-group mb-3 glass">
+					<li class="p-3 d-flex justify-content-between lh-condensed">
+						<a href={{ path('app_user_profile', {'id':user.id} )}} class="text-decoration-none" style="color:inherit;">
+							<h6 class="my-0">Posts</h6>
+							<small>All the posts
+								{{ user.username }}
+								made</small>
+						</a>
+						<span class="text-muted">{{ posts }}</span>
+					</li>
+					<li class="p-3 d-flex justify-content-between lh-condensed">
+						<a class="text-decoration-none" style="color:inherit;" href={{ path('app_user_likes', {'id':user.id} )}}>
+							<h6 class="my-0">Likes</h6>
+							<small>How much love
+								{{ user.username }}
+								spreads !</small>
+						</a>
+						<span class="text-muted">{{ likes }}</span>
+					</li>
+					<li class="p-3 d-flex justify-content-between lh-condensed">
+						<a class="text-decoration-none" style="color:inherit;" href={{ path('app_user_comments', {'id':user.id} )}}>
+							<h6 class="my-0">Comments</h6>
+							<small>How many times
+								{{ user.username }}
+								said something good (we hope) !</small>
+						</a>
+						<span class="text-muted">{{ comments }}</span>
+					</li>
+					{% if app.user is same as(user) %}
+						<li class="p-3 d-flex justify-content-between">
+							<a href={{ path('app_user_edit', {'id': user.id} ) }} class="text-decoration-none">
+								<div class="text-info">
+									<h6 class="my-0">Your Infos</h6>
+									<small>You can edit and access them here</small>
+								</div>
+							</a>
+						</li>
+					{% endif %}
+				</ul>
+			</div>
+		{% endblock %}
+
+		<div class="col-md-8 order-md-1">
+			{% block content %}{% endblock %}
+		</div>
+	{% endblock %}

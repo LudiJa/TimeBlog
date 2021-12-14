@@ -15,7 +15,7 @@ class PostType extends AbstractType
         $builder
             ->add('content')
             ->add('mediaFile', VichFileType::class,[
-                'require' => false,
+                'required' => false,
                 'allow_delete' => true,
                 'delete_label' => 'Remove Image',
                 'asset_helper' => true,

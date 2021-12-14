@@ -10,6 +10,10 @@
 			<div class="card-header pb-2">
 				<p>@{{post.user.username}}</p>
 			</div>
+			{% if post.mediaName is empty %}
+			{% else %}
+			<img class="mx-auto d-block p-1 img-fluid" src={{vich_uploader_asset(post)}} alt="Card image">
+			{% endif %}
 			<div class="card-body">
 				<h3>{{post.content}}</h3>
 			</div>

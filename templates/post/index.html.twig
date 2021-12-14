@@ -10,6 +10,10 @@
 			<div class="card-header pb-2">
 				<p>@{{post.user.username}}</p>
 			</div>
+			{% if post.mediaName is empty %}
+			{% else %}
+			<img class="mx-auto d-block p-1 img-fluid" src={{vich_uploader_asset(post)}} alt="Card image">
+			{% endif %}
 			<div class="card-body">
 				<h3>{{post.content}}</h3>
 			</div>
@@ -25,7 +29,7 @@
 						{% endif %}
 					</a>
 					{# details and delete #}
-					<a class="btn btn-outline-secondary" href={{ path('app_post_details',{'id':post.id} ) }}>Details</a>
+					<a class="btn btn-outline-info" href={{ path('app_post_details',{'id':post.id} ) }}><i class="fas fa-comments"></i></a>
 					{% if app.user %}
 						{% if app.user is same as(post.user) %}
 							<a class="btn btn-outline-secondary" href={{ path('app_post_edit',{'id':post.id} ) }}>

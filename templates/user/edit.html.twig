@@ -1,13 +1,17 @@
-{% extends 'base.html.twig' %}
+{% extends 'user/_profile.html.twig' %}
 
-{% block title %}Edit User{% endblock %}
+{% block content %}
+	{% if app.user is same as(user) %}
+		<h1>Edit your infos</h1>
 
-{% block body %}
-    <h1>Edit User</h1>
+		{{ include('user/_form.html.twig', {'button_label': 'Update'}) }}
 
-    {{ include('user/_form.html.twig', {'button_label': 'Update'}) }}
+		<a class="btn btn-light text-black my-2" href={{ path('app_user_profile', {'id':app.user.id} ) }}>Back to profile page</a>
 
-    <a href="{{ path('user_index') }}">back to list</a>
+		{{ include('user/_delete_form.html.twig') }}
 
-    {{ include('user/_delete_form.html.twig') }}
+	{% else %}
+		<h1>You don't have the rights to access this page</h1>
+		<a class="btn btn-light text-black my-2" href={{ path('app_home') }}>Back to home page</a>
+	{% endif %}
 {% endblock %}

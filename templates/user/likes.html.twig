@@ -1,0 +1,46 @@
+{% extends 'user/_profile.html.twig' %}
+{% block content %}
+	<h3>You liked ...</h3>
+	{% for post in user.likes %}
+		<div class="card border-secondary my-3 text-black">
+			<div class="card-header">
+				<a href={{ path('app_user_profile', {'id':post.user.id} )}} class="text-decoration-none">@{{post.user.username}}</a>
+
+			</div>
+			<div class="card-body">
+				<p class="card-text">
+					{{ post.content }}</p>
+
+			</div>
+			<div class="card-footer text-muted">
+				<a href={{ path('app_post_likehome', {'id': post.id} )}} class="btn btn-light">
+					{% if app.user in post.likes %}
+						<i class="fas fa-heart" style="color:red;"></i>
+					{% else %}
+						<i class="far fa-heart"></i>
+					{% endif %}
+					<span class="badge text-black">
+						{{ post.likes|length }}</span>
+				</a>
+				<a href={{ path('app_post_details',{'id': post.id} ) }} class="btn btn-primary">
+					<i class="far fa-comments"></i>
+				</a>
+				{% if app.user %}
+					{% if app.user is same as(post.user) %}
+						<a href={{ path('app_post_edit',{'id': post.id} ) }} class="btn btn-warning">
+							<i class="fas fa-wrench"></i>
+						</a>
+						<form method="post" action={{ path('app_post_delete', {'id' : post.id} ) }} class="btn btn-danger">
+							<input type="hidden" name="_token" value={{ csrf_token('delete' ~ post.id) }}>
+							<button type="submit" style="border:none;background-color:transparent;color:white;">
+								<i class="far fa-trash-alt"></i>
+							</button>
+						</form>
+					{% endif %}
+				{% endif %}
+				<span>
+					{{ post.createdAt | date('d/m/Y') }}</span>
+			</div>
+		</div>
+	{% endfor %}
+{% endblock %}

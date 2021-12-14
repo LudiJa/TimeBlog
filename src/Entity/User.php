@@ -7,13 +7,17 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Ignore;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @ORM\HasLifecycleCallbacks()
  * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
+ * @Vich\Uploadable
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -61,7 +65,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $posts;
 
     /**
-     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=Comment::class, mappedBy="user", orphanRemoval=true)
      */
     private $comments;
 
@@ -70,11 +74,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $likes;
 
+    /**
+     * @Vich\UploadableField(mapping="profile_media", fileNameProperty="mediaName")
+     * @Ignore()
+     *
+     * @var File|null
+     */
+    private $mediaFile;
+
+    /**
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $mediaName;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $updatedAt;
+
     public function __construct()
     {
         $this->posts = new ArrayCollection();
         $this->comments = new ArrayCollection();
         $this->likes = new ArrayCollection();
+        $this->vehicles = new ArrayCollection();
     }
 
     public function __toString(): string
@@ -154,7 +177,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getSalt()
     {
-        
+        // Just for the interface
     }
 
     public function getUsername(): ?string
@@ -174,7 +197,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->birthdate;
     }
 
-    public function setBirthdate(\DateTimeImmutable $birthdate): self
+    public function setBirthdate(\DateTimeImmutable$birthdate): self
     {
         $this->birthdate = $birthdate;
 
@@ -186,7 +209,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    public function setCreatedAt(\DateTimeImmutable$createdAt): self
     {
         $this->createdAt = $createdAt;
 
@@ -225,9 +248,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\PrePersist
-     * @ORM\PreUpdate
      */
-
     public function defaultCreatedAt()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -290,4 +311,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
+    /**
+     * Get the value of mediaFile.
+     */
+    public function getMediaFile(): ?File
+    {
+        return $this->mediaFile;
+    }
+
+    /**
+     * Set the value of mediaFile.
+     *
+     * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile
+     */
+    public function setMediaFile(?File $mediaFile = null): void
+    {
+        $this->mediaFile = $mediaFile;
+
+        if (null !== $mediaFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    /**
+     * Get the value of mediaName.
+     */
+    public function getMediaName(): ?string
+    {
+        return $this->mediaName;
+    }
+
+    /**
+     * Set the value of mediaName.
+     *
+     * @return self
+     */
+    public function setMediaName(?string $mediaName)
+    {
+        $this->mediaName = $mediaName;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable$updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
+    public function defaultUpdatedAt()
+    {
+        $this->updatedAt = new \DateTimeImmutable();
+    }
 }

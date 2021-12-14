@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PostRepository;
-use Doctrine\Common\Collections\Collection;
-use Symfony\Component\HttpFoundation\File\File;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
-use Vich\UploaderBundle\Mapping\Annotation as Vich;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Annotation as Vich;
 
 /**
  * @ORM\Entity(repositoryClass=PostRepository::class)
@@ -27,10 +28,11 @@ class Post
     /**
      * @ORM\Column(type="text")
      * @Assert\Length(
-     * min = 1,
-     * max = 400,
-     * minMessage = "Your post must be at least {{ limit }} 1 character long",
-     * maxMessage = "Your post cannot be longer than {{ limit }} characters")
+     *      min = 1,
+     *      max = 400,
+     *      minMessage = "Your post must be at least {{ limit }} character long",
+     *      maxMessage = "Your post cannot be longer than {{ limit }} characters",
+     *)
      */
     private $content;
 
@@ -62,15 +64,15 @@ class Post
 
     /**
      * NOTE: This is not a mapped field of entity metadata, just a simple property.
-     * 
+     *
      * @Vich\UploadableField(mapping="post_media", fileNameProperty="mediaName")
-     * 
+     *
      * @var File|null
      */
     private $mediaFile;
 
     /**
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      *
      * @var string|null
      */
@@ -99,24 +101,24 @@ class Post
         return $this;
     }
 
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
 
-    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    public function setCreatedAt(DateTimeImmutable $createdAt): self
     {
         $this->createdAt = $createdAt;
 
         return $this;
     }
 
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?DateTimeImmutable
     {
         return $this->updatedAt;
     }
 
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    public function setUpdatedAt(DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
 
@@ -125,14 +127,16 @@ class Post
 
     /**
      * @ORM\PrePersist
-     * @ORM\PreUpdate
      */
-
     public function defaultCreatedAt()
     {
         $this->createdAt = new \DateTimeImmutable();
     }
 
+    /**
+     * @ORM\PrePersist
+     * @ORM\PreUpdate
+     */
     public function defaultUpdatedAt()
     {
         $this->updatedAt = new \DateTimeImmutable();
@@ -205,17 +209,17 @@ class Post
     }
 
     /**
-     * Get the value of mediaName
-     */ 
+     * Get the value of mediaName.
+     */
     public function getMediaName(): ?string
     {
         return $this->mediaName;
     }
 
     /**
-     * Set the value of mediaName
-     */ 
-    public function setMediaName($mediaName): self
+     * Set the value of mediaName.
+     */
+    public function setMediaName(?string $mediaName): self
     {
         $this->mediaName = $mediaName;
 
@@ -224,7 +228,7 @@ class Post
 
     /**
      * Get nOTE: This is not a mapped field of entity metadata, just a simple property.
-     */ 
+     */
     public function getMediaFile(): ?File
     {
         return $this->mediaFile;
@@ -232,8 +236,7 @@ class Post
 
     /**
      * @param File|\Symfony\Component\HttpFoundation\File\UploadedFile|null $imageFile
-
-     */ 
+     */
     public function setMediaFile(?File $mediaFile = null): void
     {
         $this->mediaFile = $mediaFile;

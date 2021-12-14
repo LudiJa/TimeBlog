@@ -1,0 +1,60 @@
+{% extends 'user/_profile.html.twig' %}
+{% block content %}
+	<h3>You commented ...</h3>
+	{% for comment in user.comments %}
+		<div class="card border-secondary my-3 text-black">
+			<div class="card-header">
+				@{{comment.user.username}}
+			</div>
+			<div class="card-body">
+				<p class="card-text">
+					{{ comment.content }}</p>
+			</div>
+			<div class="px-3">
+				<div class="card border-secondary my-3 text-black">
+					<div class="card-header">
+						<a href={{ path('app_user_profile', {'id':comment.post.user.id} )}} class="text-decoration-none">@{{comment.post.user.username}}</a>
+
+					</div>
+					<div class="card-body">
+						<p class="card-text">
+							{{ comment.post.content }}</p>
+					</div>
+					<div class="card-footer text-muted ">
+						<a href={{ path('app_post_likehome', {'id': comment.post.id} )}} class="btn btn-light">
+							{% if app.user in comment.post.likes %}
+								<i class="fas fa-heart" style="color:red;"></i>
+							{% else %}
+								<i class="far fa-heart"></i>
+							{% endif %}
+							<span class="badge text-black">
+								{{ comment.post.likes|length }}</span>
+						</a>
+						<a href={{ path('app_post_details',{'id': comment.post.id} ) }} class="btn btn-primary">
+							<i class="far fa-comments"></i>
+						</a>
+						{% if app.user %}
+							{% if app.user is same as(comment.post.user) %}
+								<a href={{ path('app_post_edit',{'id': comment.post.id} ) }} class="btn btn-warning">
+									<i class="fas fa-wrench"></i>
+								</a>
+								<form method="post" action={{ path('app_post_delete', {'id' : comment.post.id} ) }} class="btn btn-danger">
+									<input type="hidden" name="_token" value={{ csrf_token('delete' ~ comment.post.id) }}>
+									<button type="submit" style="border:none;background-color:transparent;color:white;">
+										<i class="far fa-trash-alt"></i>
+									</button>
+								</form>
+							{% endif %}
+						{% endif %}
+						<span>
+							{{ comment.post.createdAt | date('d/m/Y') }}</span>
+					</div>
+				</div>
+			</div>
+			<div class="card-footer text-muted ">
+				<span>
+					{{ comment.createdAt | date('d/m/Y') }}</span>
+			</div>
+		</div>
+	{% endfor %}
+{% endblock %}
