@@ -3,3 +3,39 @@
 body {
   background-color: lightgray;
 }
+
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,700&display=swap");
+
+html {
+  font-family: "Roboto", sans-serif;
+}
+
+.blog_post {
+  position: relative;
+  margin-bottom: 50px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 1px 1px 2rem rgba(0, 0, 0, 0.3);
+  .username {
+    position: absolute;
+    left: 32px;
+    top: 12px;
+    text-decoration: none;
+  }
+}
+
+.img_pod {
+  position: absolute;
+  left: -50px;
+  top: 15px;
+  transform: translateY(-50%);
+  img {
+    height: 50px;
+    width: 50px;
+    position: relative;
+    top: 10%;
+    left: 60%;
+    border-radius: 100%;
+    box-shadow: 1px 1px 2rem rgba(0, 0, 0, 0.3);
+  }
+}

@@ -7,8 +7,9 @@
 	{# twitt section #}
 	{% block post %}
 		<div class="border border-dark my-2 flex rounded bg-light">
-			<div class="card-header pb-2">
-				<p>@{{post.user.username}}</p>
+			<div class="card-header">
+				<img class="d-block rounded-circle" src={{ vich_uploader_asset(post.user) }} alt="user profil picture" width="50" height="50">
+				<a href={{ path('app_user_profile', {'id': post.user.id} )}} class="btn btn-light">@{{post.user.username}}</a>
 			</div>
 			{% if post.mediaName is empty %}
 			{% else %}

@@ -4,17 +4,20 @@
 {% endblock %}
 
 {% block body %}
-	<h2>Liste des posts :</h2>
 	{% for post in posts %}
-		<div class="border border-dark my-2 flex rounded bg-light">
-			<div class="card-header pb-2">
-				<p>@{{post.user.username}}</p>
+
+		{# test 2 #}
+		<div class="blog_post">
+			<div class="img_pod">
+				<img class="d-block rounded-circle" src={{ vich_uploader_asset(post.user) }} alt="user profil picture" width="50" height="50">
 			</div>
-			{% if post.mediaName is empty %}
-			{% else %}
-			<img class="mx-auto d-block p-1 img-fluid" src={{vich_uploader_asset(post)}} alt="Card image">
-			{% endif %}
-			<div class="card-body">
+			<a class="username" href={{ path('app_user_profile', {'id': post.user.id} )}}>@{{post.user.username}}</a>
+			<div class="card-body pt-5 px-5">
+				{% if post.mediaName is empty %}
+					{% else %}
+						<img class="mx-auto d-block p-1 img-fluid" src={{vich_uploader_asset(post)}} alt="Card image">
+				{% endif %}
+
 				<h3>{{post.content}}</h3>
 			</div>
 			<div class="card-footer">
@@ -29,7 +32,9 @@
 						{% endif %}
 					</a>
 					{# details and delete #}
-					<a class="btn btn-outline-info" href={{ path('app_post_details',{'id':post.id} ) }}><i class="fas fa-comments"></i></a>
+					<a class="btn btn-outline-info" href={{ path('app_post_details',{'id':post.id} ) }}>
+						<i class="fas fa-comments"></i>
+					</a>
 					{% if app.user %}
 						{% if app.user is same as(post.user) %}
 							<a class="btn btn-outline-secondary" href={{ path('app_post_edit',{'id':post.id} ) }}>
