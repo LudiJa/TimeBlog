@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\Post;
 use App\Form\PostType;
+use App\Entity\Comment;
+use App\Form\CommentType;
 use App\Repository\PostRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,19 +20,34 @@ class PostController extends AbstractController
     #[Route('/', name: 'app_home')]
     public function index(PostRepository $postRepo): Response
     {
-        $arrayPosts = $postRepo->findAll();
-
-        // dd($arrayPost);
+        // $arrayPosts = $postRepo->findAll();
+        $arrayPosts = $postRepo->findBy([],['createdAt' => 'DESC']);
 
         return $this->render('post/index.html.twig', ['posts' => $arrayPosts]);
     }
 
-    #[Route('/post/{id<\d+>}', name: 'app_post_details', methods:['GET'])]
-    public function details(Post $post): Response {
-        dd($post);
-        return $this->render('post/index.html.twig', []);
+    #[Route('/post/{id<\d+>}', name: 'app_post_details', methods:['GET|POST'])]
+    public function details(Post $post, Request $request, EntityManagerInterface $em, Security $security): Response {
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+        if($form->isSubmitted() && $form->isValid())
+        {
+            $user = $security->getUser();
+            $comment->setUser($user);
+            $post->addComment($comment);
+            // ou $comment->setPost($post)
+            $em->persist($comment);
+            $em->flush();
+        }
+
+        $likes = $post->getLikes();
+        $comments = $post->getComments();
+        
+        return $this->renderForm('post/details.html.twig', ['post' => $post, 'comments' => $comments, 'form'=> $form, 'likes' => $likes ]);
     }
 
+// creation de post
     #[Route('/post/create', name: 'app_post_create')]
     #[IsGranted('ROLE_USER', message: 'You need to be logged-in to access this resource.')]
     public function create(Request $request, EntityManagerInterface $em, Security $security): Response
@@ -75,7 +92,7 @@ class PostController extends AbstractController
         return $this->redirectToRoute('app_home');
     }
 
-    #[Route('/post/{id<\d+>}', name:'app_post_delete', methods:['POST'])]
+    #[Route('/post/delete/{id<\d+>}', name:'app_post_delete', methods:['POST'])]
     #[IsGranted('ROLE_USER', message: 'You need to be logged-in to access this resource.')]
     // Post $post injection de dépendance, pareil et plus opti que findOneBy
     public function delete(Request $request, Post $post, EntityManagerInterface $em, Security $security): Response
@@ -90,5 +107,24 @@ class PostController extends AbstractController
             return $this->render('post/delete.html.twig');
         }
         return $this->redirectToRoute('app_home');
+    }
+
+// like
+    #[Route('/like/{id}', name:'app_post_like')]
+    #[IsGranted('ROLE_USER', message: 'You need to be logged-in to access this resource.')]
+    public function like(Post $post, Security $security, EntityManagerInterface $em): Response
+    {
+        $user = $security->getUser();
+
+        if($post->getLikes()->contains($user))
+        {
+            $post->removeLike($user);
+            $em->flush();
+            return $this->redirectToRoute('app_post_details', ['id' => $post->getId()]);
+        }
+        $post->addLike($user);
+        $em->flush();
+
+        return $this->redirectToRoute('app_post_details', ['id' => $post->getId()]);
     }
 }

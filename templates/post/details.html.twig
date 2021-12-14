@@ -4,8 +4,8 @@
 {% endblock %}
 
 {% block body %}
-	<h2>Liste des posts :</h2>
-	{% for post in posts %}
+	{# twitt section #}
+	{% block post %}
 		<div class="border border-dark my-2 flex rounded bg-light">
 			<div class="card-header pb-2">
 				<p>@{{post.user.username}}</p>
@@ -13,10 +13,9 @@
 			<div class="card-body">
 				<h3>{{post.content}}</h3>
 			</div>
+
 			<div class="card-footer">
-				<div
-					class="d-flex gap-2">
-					{# like #}
+				<div class="d-flex gap-2">
 					<a href={{ path('app_post_like', {'id': post.id} )}} class="btn btn-light">
 						{% if app.user in post.likes %}
 							<i class="fas fa-heart" style="color:red;"></i>
@@ -24,8 +23,7 @@
 							<i class="far fa-heart"></i>
 						{% endif %}
 					</a>
-					{# details and delete #}
-					<a class="btn btn-outline-secondary" href={{ path('app_post_details',{'id':post.id} ) }}>Details</a>
+
 					{% if app.user %}
 						{% if app.user is same as(post.user) %}
 							<a class="btn btn-outline-secondary" href={{ path('app_post_edit',{'id':post.id} ) }}>
@@ -46,5 +44,49 @@
 				</div>
 			</div>
 		</div>
-	{% endfor %}
+	{% endblock %}
+
+
+		{# comment section #}
+	{% block comments %}
+		{# formulaire #}
+			<div>
+				{% if app.user %}
+				{{form_start(form)}}
+				{{form_widget(form.content)}}
+					<button type="submit" class="btn btn-secondary">Post my comment</button>
+				{{form_end(form)}}
+			{% else %}
+				<div>
+					<div>
+						<p>You have to be connected to post.</p>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+
+		{# si pas de comm #}
+		{% if comments is empty %}
+			<div>
+				<p>Be the first to comment !</p>
+			</div>
+		{% else %}
+			{# affichage comm #}
+			{% for comment in comments %}
+				<div class="border border-dark my-2 flex rounded bg-light">
+					<div class="card-header pb-2">
+						<p>@{{comment.user.username}}</p>
+					</div>
+					<div class="card-body">
+						<h3>{{comment.content}}</h3>
+					</div>
+					<div class="card-footer">
+						<p class="align-items-center">
+							<small>{{comment.createdAt | date('d/m/Y H:i:s')}}</small>
+						</p>
+					</div>
+				</div>
+			{% endfor %}
+		{% endif %}
+	{% endblock %}
 {% endblock %}
