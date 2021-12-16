@@ -6,7 +6,6 @@
 {% block body %}
 	{% for post in posts %}
 
-		{# test 2 #}
 		<div class="blog_post">
 			<div class="img_pod">
 				<img class="d-block rounded-circle" src={{ vich_uploader_asset(post.user) }} alt="user profil picture" width="50" height="50">
@@ -15,7 +14,8 @@
 			<div class="card-body pt-5 px-5">
 				{% if post.mediaName is empty %}
 					{% else %}
-						<img class="mx-auto d-block p-1 img-fluid" src={{vich_uploader_asset(post)}} alt="Card image">
+						<img class="mx-auto d-block p-1
+					" src={{vich_uploader_asset(post)}} alt="Card image" height="300">
 				{% endif %}
 
 				<h3>{{post.content}}</h3>

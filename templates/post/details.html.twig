@@ -4,23 +4,26 @@
 {% endblock %}
 
 {% block body %}
-	{# twitt section #}
+	{# post section #}
 	{% block post %}
-		<div class="border border-dark my-2 flex rounded bg-light">
-			<div class="card-header">
+		<div class="blog_post">
+			<div class="img_pod">
 				<img class="d-block rounded-circle" src={{ vich_uploader_asset(post.user) }} alt="user profil picture" width="50" height="50">
-				<a href={{ path('app_user_profile', {'id': post.user.id} )}} class="btn btn-light">@{{post.user.username}}</a>
 			</div>
-			{% if post.mediaName is empty %}
-			{% else %}
-			<img class="mx-auto d-block p-1 img-fluid" src={{vich_uploader_asset(post)}} alt="Card image">
-			{% endif %}
-			<div class="card-body">
+			<a class="username" href={{ path('app_user_profile', {'id': post.user.id} )}}>@{{post.user.username}}</a>
+			<div class="card-body pt-5 px-5">
+				{% if post.mediaName is empty %}
+					{% else %}
+						<img class="mx-auto d-block p-1
+					" src={{vich_uploader_asset(post)}} alt="Card image" height="400">
+				{% endif %}
+
 				<h3>{{post.content}}</h3>
 			</div>
-
 			<div class="card-footer">
-				<div class="d-flex gap-2">
+				<div
+					class="d-flex gap-2">
+					{# like #}
 					<a href={{ path('app_post_like', {'id': post.id} )}} class="btn btn-light">
 						{% if app.user in post.likes %}
 							<i class="fas fa-heart" style="color:red;"></i>
@@ -28,7 +31,10 @@
 							<i class="far fa-heart"></i>
 						{% endif %}
 					</a>
-
+					{# details and delete #}
+					<a class="btn btn-outline-info" href={{ path('app_post_details',{'id':post.id} ) }}>
+						<i class="fas fa-comments"></i>
+					</a>
 					{% if app.user %}
 						{% if app.user is same as(post.user) %}
 							<a class="btn btn-outline-secondary" href={{ path('app_post_edit',{'id':post.id} ) }}>
